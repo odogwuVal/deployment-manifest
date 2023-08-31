@@ -17,13 +17,13 @@ I have also implemented a script that checks the status of the container to see 
 ```bash
     ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
           sleep 180
-          result=$( docker inspect -f {{.State.Running}} } seamlesshr)
+          result=$( docker inspect -f {{.State.Running}} } hydrogenpay)
           echo $result
           if [$result == "true"]
           then
             echo "rollout is successful"
           else
-            sed -i.back "/image:/s/${{ secrets.DOCKER_USERNAME }}\/seamlesshr:.*/${{ secrets.DOCKER_USERNAME }}\/seamlesshr:env.GITHUB_RUN_NUMBER_WITH_OFFSET/g" docker-compose.yaml
+            sed -i.back "/image:/s/${{ secrets.DOCKER_USERNAME }}\/hydrogenpay:.*/${{ secrets.DOCKER_USERNAME }}\/hydrogenpay:env.GITHUB_RUN_NUMBER_WITH_OFFSET/g" docker-compose.yaml
             docker-compose up -d
             echo "rollback to previous version complete"
           fi
