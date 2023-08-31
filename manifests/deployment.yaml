@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+        - name: my-app-container
+          image: your-app-image:tag
+          resources:
+            requests:
+              memory: "2.5Gi" # Request 2.5 GB of Memory
+              cpu: "0.0" # Request 1 CPU
+            limits:
+              memory: "3Gi"
+              cpu: "1"
+              
