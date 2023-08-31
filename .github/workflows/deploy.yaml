@@ -46,7 +46,7 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/seamlesshr:${{ github.run_number }}
+        tags: ${{ secrets.DOCKER_USERNAME }}/hydrogenpay:${{ github.run_number }}
 
   deploy_to_prod:
     runs-on: ubuntu-latest
@@ -68,20 +68,20 @@ jobs:
         echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
         ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
           cd /home/ubuntu &&
-          sed -i.back "/image:/s/${{ secrets.DOCKER_USERNAME }}\/seamlesshr:.*/${{ secrets.DOCKER_USERNAME }}\/seamlesshr:$GITHUB_CONTEXT/g" docker-compose.yaml &&
+          sed -i.back "/image:/s/${{ secrets.DOCKER_USERNAME }}\/hydrogenpay:.*/${{ secrets.DOCKER_USERNAME }}\/hydrogenpay:$GITHUB_CONTEXT/g" docker-compose.yaml &&
           docker-compose up -d
         '
     - name: check rollout status
       run: |
         ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
           sleep 180
-          result=$( docker inspect -f {{.State.Running}} } seamlesshr)
+          result=$( docker inspect -f {{.State.Running}} } hydrogenpay)
           echo $result
           if [$result == "true"]
           then
             echo "rollout is successful"
           else
-            sed -i.back "/image:/s/${{ secrets.DOCKER_USERNAME }}\/seamlesshr:.*/${{ secrets.DOCKER_USERNAME }}\/seamlesshr:env.GITHUB_RUN_NUMBER_WITH_OFFSET/g" docker-compose.yaml
+            sed -i.back "/image:/s/${{ secrets.DOCKER_USERNAME }}\/hydrogenpay:.*/${{ secrets.DOCKER_USERNAME }}\/hydrogenpay:env.GITHUB_RUN_NUMBER_WITH_OFFSET/g" docker-compose.yaml
             docker-compose up -d
             echo "rollback to previous version complete"
           fi
